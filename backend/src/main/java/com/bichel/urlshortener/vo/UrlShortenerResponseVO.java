@@ -5,8 +5,8 @@ import java.util.UUID;
 public class UrlShortenerResponseVO {
 
     private UUID id;
-    private String urlShortener;
-    private String urlOriginal;
+    private String shortUrl;
+    private String originalUrl;
 
     public UUID getId() {
         return this.id;
@@ -16,19 +16,19 @@ public class UrlShortenerResponseVO {
         this.id = id;
     }
 
-    public String getUrlShortener() {
-        return this.urlShortener;
+    public String getShortUrl() {
+        return this.shortUrl;
     }
 
-    public void setUrlShortener(String urlShortener) {
-        this.urlShortener = urlShortener;
+    public void setShortUrl(String shortUrl) {
+        this.shortUrl = shortUrl;
     }
 
-    public String getUrlOriginal() {
-        return this.urlOriginal;
+    public String getOriginalUrl() {
+        return this.originalUrl;
     }
 
-    public void setUrlOriginal(String urlOriginal) {
-        this.urlOriginal = urlOriginal;
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = originalUrl;
     }
 }
