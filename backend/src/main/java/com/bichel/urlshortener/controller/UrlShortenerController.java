@@ -1,11 +1,11 @@
 package com.bichel.urlshortener.controller;
 
+import com.bichel.urlshortener.exception.OriginalUrlIsMissingException;
 import com.bichel.urlshortener.job.ShortenerGenerator;
 import com.bichel.urlshortener.vo.UrlShortenerRequestVO;
 import com.bichel.urlshortener.vo.UrlShortenerResponseVO;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/url-shortener")
 public class UrlShortenerController {
 
-    private ShortenerGenerator shortenerGenerator;
+    private final ShortenerGenerator shortenerGenerator;
 
     public UrlShortenerController(ShortenerGenerator shortenerGenerator) {
         this.shortenerGenerator = shortenerGenerator;
@@ -24,13 +24,11 @@ public class UrlShortenerController {
     @PostMapping
     @CrossOrigin(origins = "*")
     public ResponseEntity<UrlShortenerResponseVO> generate(@Valid @RequestBody UrlShortenerRequestVO request) {
-        /*if(Strings.isBlank(request.getOriginalUrl())) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Original URL is missing");
-        }*/
+        if(Strings.isBlank(request.getOriginalUrl())) {
+            throw new OriginalUrlIsMissingException("Original URL is missing");
+        }
 
-        final UUID id  = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         UrlShortenerResponseVO responseVO = new UrlShortenerResponseVO();
         responseVO.setId(id);
         responseVO.setOriginalUrl(request.getOriginalUrl());
@@ -40,5 +38,4 @@ public class UrlShortenerController {
 
         return ResponseEntity.ok(responseVO);
     }
-
 }
