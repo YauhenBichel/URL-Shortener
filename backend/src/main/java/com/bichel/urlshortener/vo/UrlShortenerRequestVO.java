@@ -1,14 +1,14 @@
 package com.bichel.urlshortener.vo;
 
 public class UrlShortenerRequestVO {
-    private String urlOriginal;
+    private String originalUrl;
 
-    public String getUrlOriginal() {
-        return this.urlOriginal;
+    public String getOriginalUrl() {
+        return this.originalUrl;
     }
 
-    public void setUrlOriginal(String urlOriginal) {
-        this.urlOriginal = urlOriginal;
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = originalUrl;
     }
 
 }
