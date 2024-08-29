@@ -1,5 +1,10 @@
 # URL Shortener 
 
+Design and implementation URL Shortener using 
+- Java and Spring for backend development, 
+- React for frontend, 
+- Dockerfiles and compose.yml for containerization and running
+
 ## How to run
 
 > docker compose up
