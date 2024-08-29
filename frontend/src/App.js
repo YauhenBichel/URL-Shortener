@@ -41,7 +41,7 @@ function App() {
         if (mountedRef.current) {
             return generateShortUrl();
         }
-    }, [originalURL]);
+    });
 
     return (
       <div className="app">
