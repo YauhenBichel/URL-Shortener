@@ -1,5 +1,9 @@
 package com.bichel.urlshortener.storage;
 
+import com.bichel.urlshortener.exception.OriginalUrlNotFoundException;
+import com.bichel.urlshortener.exception.OriginalsTheSameShortsAreDiffException;
+import com.bichel.urlshortener.exception.ShortUrlNotFoundException;
+import com.bichel.urlshortener.exception.ShortsTheSameOriginalsAreDiffException;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -25,7 +29,16 @@ public final class UrlMemoryStorage implements UrlStorage {
             return;
         }
 
-        //TODO: handle collision
+        if(mapOriginalToShort.containsKey(originalUrl) &&
+            !mapOriginalToShort.get(originalUrl).equals(shortUrl)) {
+            throw new OriginalsTheSameShortsAreDiffException(
+                    String.format("Original URL is '%s', short URL is '%s'", originalUrl, shortUrl));
+        }
+        if(mapShortToOriginal.containsKey(shortUrl) &&
+                !mapShortToOriginal.get(shortUrl).equals(originalUrl)) {
+            throw new ShortsTheSameOriginalsAreDiffException(
+                    String.format("Original URL is '%s', short URL is '%s'", originalUrl, shortUrl));
+        }
 
         this.mapOriginalToShort.put(originalUrl, shortUrl);
     }
@@ -36,16 +49,33 @@ public final class UrlMemoryStorage implements UrlStorage {
             return;
         }
 
-        //TODO: handle collision
+        if(mapOriginalToShort.containsKey(originalUrl) &&
+                !mapOriginalToShort.get(originalUrl).equals(shortUrl)) {
+            throw new OriginalsTheSameShortsAreDiffException(
+                    String.format("Original URL is '%s', short URL is '%s'", originalUrl, shortUrl));
+        }
+        if(mapShortToOriginal.containsKey(shortUrl) &&
+                !mapShortToOriginal.get(shortUrl).equals(originalUrl)) {
+            throw new ShortsTheSameOriginalsAreDiffException(
+                    String.format("Original URL is '%s', short URL is '%s'", originalUrl, shortUrl));
+        }
 
         this.mapShortToOriginal.put(shortUrl, originalUrl);
     }
 
     public String getOriginalUrl(String shortUrl) {
+        if(!mapShortToOriginal.containsKey(shortUrl)) {
+            throw new ShortUrlNotFoundException(shortUrl);
+        }
+
         return this.mapShortToOriginal.get(shortUrl);
     }
 
     public String getShortUrl(String originalUrl) {
+        if(!mapOriginalToShort.containsKey(originalUrl)) {
+            throw new OriginalUrlNotFoundException(originalUrl);
+        }
+
         return this.mapOriginalToShort.get(originalUrl);
     }
 }

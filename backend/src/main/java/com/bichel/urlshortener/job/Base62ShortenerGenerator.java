@@ -1,6 +1,5 @@
 package com.bichel.urlshortener.job;
 
-import com.bichel.urlshortener.storage.UrlMemoryStorage;
 import com.bichel.urlshortener.storage.UrlStorage;
 import com.bichel.urlshortener.utility.Base62;
 import org.springframework.stereotype.Component;
