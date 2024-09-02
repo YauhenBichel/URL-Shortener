@@ -43,6 +43,27 @@ function App() {
     }
 
     useEffect(() => {
+
+        const parts = window.location.href.split("http://localhost:3001");
+        console.log(parts);
+        if(parts.length > 1 && parts[1].matchAll(["^//a-zA-Z0-9"])) {
+            const shortHash = parts[1].substring(1);
+            console.log("short url");
+            console.log("short hash: ", shortHash);
+            fetch('http://localhost:8081/api/url-shortener/' + shortHash, {
+                method: 'get',
+                headers: {'Content-Type': 'application/json'},
+            }).then((response) => response.json())
+                .then(jsonResponse => {
+                    console.log("response: ", jsonResponse);
+                    console.log("response: original url: ", jsonResponse.originalUrl);
+                    window.location.href = jsonResponse.originalUrl;
+                }).catch(err => {
+                console.log("err: ", err);
+            });
+            return;
+        }
+
         if (mountedRef.current) {
             return generateShortUrl();
         }
@@ -50,8 +71,6 @@ function App() {
 
     const onDirectToOriginalUrl = (e) => {
         e.preventDefault();
-        //http://localhost:8080/api/url-shortener/qJdGG
-
         console.log("URL: ", originalURL);
         fetch('http://localhost:8081/api/url-shortener/' + shortHash, {
             method: 'get',
