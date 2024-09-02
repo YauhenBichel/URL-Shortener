@@ -8,6 +8,7 @@ import com.bichel.urlshortener.vo.UrlOriginalResponseVO;
 import com.bichel.urlshortener.vo.UrlShortenerRequestVO;
 import com.bichel.urlshortener.vo.UrlShortenerResponseVO;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,14 @@ public class UrlShortenerController {
 
     private final ShortenerGenerator shortenerGenerator;
     private final UrlStorage urlStorage;
+    private final UrlStorage urlStorage;
 
     public UrlShortenerController(ShortenerGenerator shortenerGenerator,
                                   UrlMemoryStorage urlStorage) {
+    public UrlShortenerController(ShortenerGenerator shortenerGenerator,
+                                  UrlMemoryStorage urlStorage) {
         this.shortenerGenerator = shortenerGenerator;
+        this.urlStorage = urlStorage;
         this.urlStorage = urlStorage;
     }
 
