@@ -19,10 +19,11 @@ function App() {
     const [originalURL, setOriginalURL] = useState("");
     const [currentURL, setCurrentURL] = useState("");
     const [shortURL, setShortURL] = useState("");
+    const [shortHash, setShortHash] = useState("");
 
     const generateShortUrl = () => {
         console.log("URL: ", originalURL);
-        fetch('http://localhost:8080/url-shortener', {
+        fetch('http://localhost:8081/api/url-shortener', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -31,7 +32,11 @@ function App() {
         }).then((response) => response.json())
             .then(jsonResponse => {
                 console.log("response: ", jsonResponse);
-                setShortURL(window.location.href + jsonResponse.shortUrl);
+                console.log("response: short url: ", jsonResponse.shortUrl);
+                if(jsonResponse && jsonResponse.shortUrl) {
+                    setShortHash(jsonResponse.shortUrl);
+                    setShortURL(window.location.host + '/' + jsonResponse.shortUrl);
+                }
             }).catch(err => {
             console.log("err: ", err);
         });
@@ -42,6 +47,24 @@ function App() {
             return generateShortUrl();
         }
     });
+
+    const onDirectToOriginalUrl = (e) => {
+        e.preventDefault();
+        //http://localhost:8080/api/url-shortener/qJdGG
+
+        console.log("URL: ", originalURL);
+        fetch('http://localhost:8081/api/url-shortener/' + shortHash, {
+            method: 'get',
+            headers: {'Content-Type': 'application/json'},
+        }).then((response) => response.json())
+            .then(jsonResponse => {
+                console.log("response: ", jsonResponse);
+                console.log("response: original url: ", jsonResponse.originalUrl);
+                window.location.href = jsonResponse.originalUrl;
+            }).catch(err => {
+            console.log("err: ", err);
+        });
+    }
 
     return (
       <div className="app">
@@ -61,11 +84,10 @@ function App() {
               </div>
               <div className="row text-center">
                   <div className="mb-3">
-                    <span>Short URL: </span>{shortURL}<span></span>
+                    <a href={shortURL} onClick={onDirectToOriginalUrl}>{shortURL}</a>
                   </div>
               </div>
           </div>
-
       </div>
   );
 }

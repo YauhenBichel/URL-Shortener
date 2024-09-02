@@ -4,6 +4,7 @@ import com.bichel.urlshortener.exception.OriginalUrlIsMissingException;
 import com.bichel.urlshortener.job.ShortenerGenerator;
 import com.bichel.urlshortener.storage.UrlMemoryStorage;
 import com.bichel.urlshortener.storage.UrlStorage;
+import com.bichel.urlshortener.vo.UrlOriginalResponseVO;
 import com.bichel.urlshortener.vo.UrlShortenerRequestVO;
 import com.bichel.urlshortener.vo.UrlShortenerResponseVO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,13 +46,18 @@ public class UrlShortenerController {
         return ResponseEntity.ok(responseVO);
     }
 
-    @RequestMapping(value = "/{shortUrl}", method = RequestMethod.GET)
+    @GetMapping(value = "/{shortUrl}")
     @CrossOrigin(origins = "*")
-    public void redirectToOriginalUrl(HttpServletResponse httpServletResponse, @PathVariable("shortUrl") String shortUrl) {
+    public ResponseEntity<UrlOriginalResponseVO> getOriginalUrl(@PathVariable("shortUrl") String shortUrl) {
 
         final String originalUrl = urlStorage.getOriginalUrl(shortUrl);
 
-        httpServletResponse.setHeader("Location", originalUrl);
-        httpServletResponse.setStatus(302);
+        UrlOriginalResponseVO responseVO = new UrlOriginalResponseVO();
+        responseVO.setOriginalUrl(originalUrl);
+
+        //httpServletResponse.setHeader("Location", originalUrl);
+        //httpServletResponse.setStatus(302);
+
+        return ResponseEntity.ok(responseVO);
     }
 }
