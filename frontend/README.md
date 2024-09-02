@@ -1,5 +1,8 @@
 # URL-Shortener
 
+## How to run
+Please use compose in root folder
+
 ## Build
 ### `npm start`
 ### `npm test`
