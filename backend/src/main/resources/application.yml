@@ -1,7 +1,15 @@
 server:
   servlet:
     context-path: /api
+  address: 0.0.0.0
 
 spring:
   application:
     name: url-shortener
+  data:
+    redis:
+      database: 0
+      port: 6379
+      host: localhost
+      connect-timeout: 60 #seconds
+      password: paSsw0rd

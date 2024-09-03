@@ -28,3 +28,10 @@ Uses images, built from Dockerfiles in backend and frontend folders
 ## Frontend Container
 
 >docker build -t bichelyauhen/url-shortener-react-docker .
+
+## Redis
+
+### Periodic RDB snapshot
+
+- save 60 1 # Save after 60 seconds if at least 1 key changed
+
