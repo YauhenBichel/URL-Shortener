@@ -1,12 +1,16 @@
 services:
-  backend:
+  webserver:
+    container_name: url-short-webserver
     build: backend
     restart: always
     ports:
       - 8081:8080
     networks:
       - react-spring
+    depends_on:
+      - redis
   frontend:
+    container_name: url-short-frontend
     build:
       context: frontend
       target: development
@@ -18,9 +22,44 @@ services:
     networks:
       - react-spring
     depends_on:
-      - backend
+      - webserver
     expose:
       - 8080
       - 3000
+    command: npm start
+    develop:
+      watch:
+        - action: sync
+          path: ./web
+          target: /src/web
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+  redis:
+    container_name: url-short-redis
+    image: redis:alpine
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: > 
+      --requirepass paSsw0rd
+      --save 60 1 
+      --loglevel warning
+    ports: 
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: $REDIS_PASSWORD
+      REDIS_USERNAME: $REDIS_USERNAME
+    tty: true
+    volumes:
+      - /srv/docker/redis:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+    env_file:
+    - redis.env.dev
 networks:
   react-spring: {}
+

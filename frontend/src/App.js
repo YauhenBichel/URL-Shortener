@@ -23,7 +23,7 @@ function App() {
 
     const generateShortUrl = () => {
         console.log("URL: ", originalURL);
-        fetch('http://localhost:8081/api/url-shortener', {
+        fetch('http://localhost:8080/api/url-shortener', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -50,7 +50,7 @@ function App() {
             const shortHash = parts[1].substring(1);
             console.log("short url");
             console.log("short hash: ", shortHash);
-            fetch('http://localhost:8081/api/url-shortener/' + shortHash, {
+            fetch('http://localhost:8080/api/url-shortener/' + shortHash, {
                 method: 'get',
                 headers: {'Content-Type': 'application/json'},
             }).then((response) => response.json())
@@ -72,7 +72,7 @@ function App() {
     const onDirectToOriginalUrl = (e) => {
         e.preventDefault();
         console.log("URL: ", originalURL);
-        fetch('http://localhost:8081/api/url-shortener/' + shortHash, {
+        fetch('http://localhost:8080/api/url-shortener/' + shortHash, {
             method: 'get',
             headers: {'Content-Type': 'application/json'},
         }).then((response) => response.json())

@@ -2,18 +2,19 @@ package com.bichel.urlshortener.controller;
 
 import com.bichel.urlshortener.exception.OriginalUrlIsMissingException;
 import com.bichel.urlshortener.job.ShortenerGenerator;
+import com.bichel.urlshortener.model.ShortUrlEntity;
+import com.bichel.urlshortener.repository.ShortUrlRepository;
 import com.bichel.urlshortener.storage.UrlMemoryStorage;
 import com.bichel.urlshortener.storage.UrlStorage;
 import com.bichel.urlshortener.vo.UrlOriginalResponseVO;
 import com.bichel.urlshortener.vo.UrlShortenerRequestVO;
 import com.bichel.urlshortener.vo.UrlShortenerResponseVO;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -22,15 +23,14 @@ public class UrlShortenerController {
 
     private final ShortenerGenerator shortenerGenerator;
     private final UrlStorage urlStorage;
-    private final UrlStorage urlStorage;
+    private final ShortUrlRepository shortUrlRepository;
 
     public UrlShortenerController(ShortenerGenerator shortenerGenerator,
-                                  UrlMemoryStorage urlStorage) {
-    public UrlShortenerController(ShortenerGenerator shortenerGenerator,
-                                  UrlMemoryStorage urlStorage) {
+                                  UrlMemoryStorage urlStorage,
+                                  ShortUrlRepository shortUrlRepository) {
         this.shortenerGenerator = shortenerGenerator;
         this.urlStorage = urlStorage;
-        this.urlStorage = urlStorage;
+        this.shortUrlRepository = shortUrlRepository;
     }
 
     @PostMapping
@@ -46,8 +46,18 @@ public class UrlShortenerController {
         responseVO.setOriginalUrl(request.getOriginalUrl());
 
         final String shortUrl = shortenerGenerator.generateUrlShortener(request.getOriginalUrl());
-        responseVO.setShortUrl(shortUrl);
 
+        ShortUrlEntity shortUrlEntity = new ShortUrlEntity();
+        shortUrlEntity.setId(shortUrl);
+        shortUrlEntity.setOriginalUrl(request.getOriginalUrl());
+
+        try {
+            shortUrlRepository.save(shortUrlEntity);
+        }catch(Exception ex) {
+            System.out.println(ex);
+        }
+
+        responseVO.setShortUrl(shortUrl);
         return ResponseEntity.ok(responseVO);
     }
 
@@ -55,13 +65,16 @@ public class UrlShortenerController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<UrlOriginalResponseVO> getOriginalUrl(@PathVariable("shortUrl") String shortUrl) {
 
-        final String originalUrl = urlStorage.getOriginalUrl(shortUrl);
+        String originalUrl = "";
+        //String originalUrl = urlStorage.getOriginalUrl(shortUrl);
+
+        Optional<ShortUrlEntity> optOriginalUrl = shortUrlRepository.findById(shortUrl);
+        if(optOriginalUrl.isPresent()) {
+            originalUrl = optOriginalUrl.get().getOriginalUrl();
+        }
 
         UrlOriginalResponseVO responseVO = new UrlOriginalResponseVO();
         responseVO.setOriginalUrl(originalUrl);
-
-        //httpServletResponse.setHeader("Location", originalUrl);
-        //httpServletResponse.setStatus(302);
 
         return ResponseEntity.ok(responseVO);
     }
