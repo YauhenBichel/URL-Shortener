@@ -50,7 +50,12 @@ public class UrlShortenerController {
         ShortUrlEntity shortUrlEntity = new ShortUrlEntity();
         shortUrlEntity.setId(shortUrl);
         shortUrlEntity.setOriginalUrl(request.getOriginalUrl());
-        shortUrlRepository.save(shortUrlEntity);
+
+        try {
+            shortUrlRepository.save(shortUrlEntity);
+        }catch(Exception ex) {
+            System.out.println(ex);
+        }
 
         responseVO.setShortUrl(shortUrl);
         return ResponseEntity.ok(responseVO);

@@ -12,4 +12,4 @@ spring:
       port: 6379
       host: localhost
       connect-timeout: 60 #seconds
-      password: paSsw0rd
+      password:
